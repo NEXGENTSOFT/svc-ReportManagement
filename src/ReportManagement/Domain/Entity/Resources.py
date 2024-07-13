@@ -1,10 +1,9 @@
 import uuid
 class Resources:
-    def __init__(self, url, text, report_id):
+    def __init__(self, title, descrip):
         self.uuid = uuid.uuid4()
-        self.url = url
-        self.text = text
-        self.report_id = report_id
+        self.title = title
+        self.descrip = descrip
 
 
 

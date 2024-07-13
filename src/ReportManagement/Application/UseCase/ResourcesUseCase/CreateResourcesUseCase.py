@@ -5,5 +5,8 @@ class CreateResourcesUseCase:
         self.repository = repository
 
     def create(self, report):
-        resources = [Resources(**d) for d in report]
-        return self.repository.create_resources(resources)
+        if isinstance(report, list) and all(isinstance(d, dict) for d in report):
+            resources = [Resources(**d) for d in report]
+            return self.repository.create_resources(resources)
+        else:
+            raise ValueError("Invalid format for resources")

@@ -1,14 +1,12 @@
 from bson import ObjectId
 from src.ReportManagement.Domain.Ports.DownloadablePort import DownloadablePort
 from src.ReportManagement.Domain.Entity.Downloadable import Downloadable
-from src.ReportManagement.Infrastructure.Models.MongoDB.MongoDBDownloadableModel import DownloadoadableModel
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
+from src.Database.MongoDB.connection import downloadable_collection
 class DownloadableRepository(DownloadablePort):
     def __init__(self):
-        self.collection = DownloadoadableModel.get_collection()
-
+        self.collection = downloadable_collection
     def get_downloadable(self, report_type: str, report_data: dict):
         if report_type == "1":
             report_content = f"Reporte 1 {report_data['date']}"
@@ -71,7 +69,7 @@ class DownloadableRepository(DownloadablePort):
                 "status": False
             }, 500
 
-    def delete_resources(self, id: str):
+    def delete_downloadable(self, id: str):
         result = self.collection.delete_one({"id": ObjectId(id)})
         status_code = 200
         if result.deleted_count == 0:
@@ -85,7 +83,7 @@ class DownloadableRepository(DownloadablePort):
                 "status": True
             }, status_code
 
-    def update_resources(self, id: str = None, title: str = None, new_quantity: int = 0):
+    def update_downloadable(self, id: str = None, title: str = None, new_quantity: int = 0):
         if id:
             reso = self.collection.find_one({"id": ObjectId(id)})
         elif title:

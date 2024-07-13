@@ -2,15 +2,13 @@ from pydantic import BaseModel, Field
 from bson import ObjectId
 from typing import Optional
 class ResourcesModel(BaseModel):
-    def __init__(self, id=None, title=None, description=None):
-        self.id = id
-        self.title = title
-        self.description = description
+    id: Optional[ObjectId] = Field(None, alias="_id")
+    title: Optional[str] = None
+    descrip: Optional[str] = None
 
-    def to_dict(self):
-        return {
-             "_id": self.id,
-            "title": self.title,
-            "description": self
-                }
 
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }

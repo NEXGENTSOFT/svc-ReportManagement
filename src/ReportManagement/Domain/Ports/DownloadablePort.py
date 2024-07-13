@@ -11,13 +11,13 @@ class DownloadablePort(ABC):
         pass
 
     @abstractmethod
+    def create_downloadable(self, downloadable: list[Downloadable]):
+        pass
+
+    @abstractmethod
     def delete_downloadable(self, id):
         pass
 
     @abstractmethod
     def update_downloadable(self, id, title):
-        pass
-
-    @abstractmethod
-    def create_downloadable(self, downloadable: list[Downloadable]):
         pass

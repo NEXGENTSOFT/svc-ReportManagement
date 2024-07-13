@@ -13,6 +13,17 @@ DB_NAME = os.getenv('DB_NAME', 'databaseMicro')
 
 client = MongoClient(DB_HOST, DB_PORT)
 db = client[DB_NAME]
-
 reports_collection = db.reports
+resource_collection= db.resources
+downloadable_collection= db.downloadables
 
+
+try:
+    client = MongoClient(DB_HOST, DB_PORT)
+    db = client[DB_NAME]
+    reports_collection = db.reports
+    resource_collection = db.resources
+    downloadable_collection = db.downloadables
+    logger.info("Connected to MongoDB successfully")
+except Exception as e:
+    logger.error(f"Failed to connect to MongoDB: {e}")

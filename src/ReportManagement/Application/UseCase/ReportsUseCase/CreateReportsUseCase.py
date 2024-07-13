@@ -5,5 +5,8 @@ class CreateReportsUseCase:
         self.repository = repository
 
     def create(self, report):
-        reports = [Report(**d) for d in report]
-        return self.repository.create_report(reports)
+        if isinstance(report, list) and all(isinstance(d, dict) for d in report):
+            reports = [Report(**d) for d in report]
+            return self.repository.create_report(reports)
+        else:
+            raise ValueError("Invalid format for report")

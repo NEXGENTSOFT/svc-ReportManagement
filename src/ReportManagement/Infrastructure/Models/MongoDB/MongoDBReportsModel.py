@@ -3,22 +3,16 @@ from bson import ObjectId
 from typing import Optional
 
 class ReportsModel(BaseModel):
-    def __init__(self, id=None, tile=None, descrip=None, image=None, drawing=None,measurements=None, type=None ):
-        self.id = id
-        self.title = tile
-        self.descrip = descrip
-        self.image = image
-        self.drawing = drawing
-        self.measurements = measurements
-        self.type = type
+    id: Optional[ObjectId] = Field(None, alias="_id")
+    title: Optional[str] = None
+    descrip: Optional[str] = None
+    image: Optional[str] = None
+    drawing: Optional[str] = None
+    measurements: Optional[str] = None
+    type: Optional[str] = None
 
-    def to_dict(self):
-        return {
-          "_id": self.id,
-            "title": self.title,
-            "descripción": self.descrip,
-            "image": self.image,
-            "drawing": self.drawing,
-            "measurements": self.measurements,
-            "type": self.type
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
         }

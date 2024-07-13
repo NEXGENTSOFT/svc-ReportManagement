@@ -1,11 +1,14 @@
 from bson import ObjectId
+from pymongo import MongoClient
+
 from src.ReportManagement.Domain.Ports.ResourcesPort import ResourcesPort
 from src.ReportManagement.Domain.Entity.Resources import Resources
 from src.ReportManagement.Infrastructure.Models.MongoDB.MongoDBResourcesModel import ResourcesModel
+from src.Database.MongoDB.connection import resource_collection
 
 class ResourcesRepository(ResourcesPort):
     def __init__(self):
-        self.collection = ResourcesModel.get_collection()
+        self.collection = resource_collection
 
     def get_resources(self):
         resour = list(self.collection.find({}, {"_id": 0}))

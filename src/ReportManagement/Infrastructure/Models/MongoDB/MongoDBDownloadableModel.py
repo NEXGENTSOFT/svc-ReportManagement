@@ -4,12 +4,11 @@ from typing import Optional
 
 
 class DownloadoadableModel(BaseModel):
-    def __init__(self, id=None,type=None):
-        self.id = id
-        self.type = type
+    id: Optional[ObjectId] = Field(None, alias="_id")
+    type: Optional[str] = None
 
-    def to_dict(self):
-        return {
-            "_id": self.id,
-            "type": self.type
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
         }
