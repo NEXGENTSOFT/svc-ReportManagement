@@ -1,10 +1,9 @@
 from bson import ObjectId
 from pymongo import MongoClient
 
-from src.ReportManagement.Domain.Ports.ResourcesPort import ResourcesPort
-from src.ReportManagement.Domain.Entity.Resources import Resources
-from src.ReportManagement.Infrastructure.Models.MongoDB.MongoDBResourcesModel import ResourcesModel
 from src.Database.MongoDB.connection import resource_collection
+from src.ReportManagement.Domain.Ports.ResourcesPort import ResourcesPort
+
 
 class ResourcesRepository(ResourcesPort):
     def __init__(self):
@@ -21,7 +20,10 @@ class ResourcesRepository(ResourcesPort):
             "status": status
         }, status_code
 
-    def create_resources(self, resources: list[Resources]):
+    def create_resources(self, resources: list[dict]):
+        for resource in resources:
+            if 'id' in resource and isinstance(resource['id'], str):
+                resource['_id'] = ObjectId(resource.pop('id'))
         result = self.collection.insert_many(resources)
         if result.inserted_ids:
             return {
@@ -36,49 +38,61 @@ class ResourcesRepository(ResourcesPort):
             }, 500
 
     def delete_resources(self, id: str):
-        result = self.collection.delete_one({"_id": ObjectId(id)})
-        status_code = 200
-        if result.deleted_count == 0:
+        try:
+            result = self.collection.delete_one({"_id": ObjectId(id)})
+            if result.deleted_count > 0:
+                return {
+                    "message": "Recurso eliminado con éxito",
+                    "status": True
+                }, 200
+            else:
+                return {
+                    "message": "Recurso no encontrado",
+                    "status": False
+                }, 404
+        except Exception as e:
             return {
-                "message": "Recurso no encontrado",
-                "status": False
-            }, 500
-        else:
-            return {
-                "message": "Recurso eliminado con éxito",
-                "status": True
-            }, status_code
-
-    def update_resources(self, resource_id: str = None, title: str = None, new_quantity: int = 0):
-        if resource_id:
-            reso = self.collection.find_one({"_id": ObjectId(resource_id)})
-        elif title:
-            reso = self.collection.find_one({"title": title})
-        else:
-            return {
-                "data": {},
-                "message": "ID o título requerido",
-                "status": False
-            }, 400
-
-        if not reso:
-            return {
-                "data": {},
-                "message": "Recurso no encontrado",
+                "message": str(e),
                 "status": False
             }, 500
 
-        result = self.collection.update_one({"_id": ObjectId(reso["_id"])}, {"$set": {"stock": new_quantity}})
-        if result.modified_count > 0:
-            updated_reso = self.collection.find_one({"_id": ObjectId(reso["_id"])}, {"_id": 0})
-            return {
-                "data": updated_reso,
-                "message": "Actualizada con éxito",
-                "status": True
-            }, 200
-        else:
+    def update_resources(self, resource_id: str = None, title: str = None, update_data: dict = {}):
+        try:
+            if resource_id:
+                reso = self.collection.find_one({"_id": ObjectId(resource_id)})
+            elif title:
+                reso = self.collection.find_one({"title": title})
+            else:
+                return {
+                    "data": {},
+                    "message": "ID o título requerido",
+                    "status": False
+                }, 400
+
+            if not reso:
+                return {
+                    "data": {},
+                    "message": "Recurso no encontrado",
+                    "status": False
+                }, 404
+
+            result = self.collection.update_one({"_id": ObjectId(reso["_id"])}, {"$set": update_data})
+            if result.modified_count > 0:
+                updated_reso = self.collection.find_one({"_id": ObjectId(reso["_id"])}, {"_id": 0})
+                return {
+                    "data": updated_reso,
+                    "message": "Actualización exitosa",
+                    "status": True
+                }, 200
+            else:
+                return {
+                    "data": {},
+                    "message": "Error al actualizar",
+                    "status": False
+                }, 500
+        except Exception as e:
             return {
                 "data": {},
-                "message": "Error al actualizar",
+                "message": str(e),
                 "status": False
             }, 500

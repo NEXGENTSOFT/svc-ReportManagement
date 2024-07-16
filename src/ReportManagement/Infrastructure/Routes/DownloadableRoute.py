@@ -44,17 +44,9 @@ def start_report():
 '''
 
 
-@downloadable_routes.route("/downloadable", methods=["GET"])
-def get_downloadable():
-    return get_controller.run()
-
 @downloadable_routes.route("/downloadable", methods=["POST"])
-def get_downloadable():
-    return create_controller.run(request)
-
-@downloadable_routes.route("/downloadable/<string:id>", methods=["DELETE"])
-def create_resources():
-    data = request.get_json()  # Espera un diccionario o una lista de diccionarios
+def create_downloadable():
+    data = request.get_json()
     if isinstance(data, list) and all(isinstance(item, dict) for item in data):
         return create_controller.run(data)
     else:
@@ -66,8 +58,17 @@ def delete_downloadable(id):
 
 @downloadable_routes.route("/downloadable/<string:id_or_title>", methods=["PUT"])
 def update_downloadable(id_or_title):
-    if ObjectId.is_valid(id_or_title):
-        return update_controller.run(id_or_title)
-    else:
-        return update_controller.run(title=id_or_title)
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No update data provided"}), 400
 
+    if ObjectId.is_valid(id_or_title):
+        return update_controller.run(id=id_or_title, payload=data)
+    else:
+        return update_controller.run(title=id_or_title, payload=data)
+
+@downloadable_routes.route("/downloadable", methods=["GET"])
+def get_downloadable():
+    report_type = request.args.get('report_type')
+    report_data = request.args.to_dict()
+    return get_controller.run(report_type, report_data)

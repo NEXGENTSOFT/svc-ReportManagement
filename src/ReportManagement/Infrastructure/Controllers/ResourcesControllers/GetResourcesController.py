@@ -1,3 +1,4 @@
+from src.ReportManagement.Application.UseCase.ResourcesUseCase.UpdateResourcesUseCase import UpdateResourcesUseCase as UseCase, Port
 from src.ReportManagement.Application.UseCase.ResourcesUseCase.GetResourcesUseCase import GetResourcesUseCase as UseCase, Port
 
 class GetResourcesController:

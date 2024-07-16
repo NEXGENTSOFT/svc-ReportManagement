@@ -2,8 +2,16 @@ from src.ReportManagement.Application.UseCase.ReportsUseCase.CreateReportsUseCas
 
 
 class CreateReportsController:
-    def __init__(self, repository: Port):
-        self.__use_case = UseCase(repository)
+    def __init__(self, repository):
+        self.repository = repository
 
-    def run(self, request):
-        return self.__use_case.create(request.get_json())
+    def run(self, reports_dicts):
+        try:
+            # Asegúrate de que resources_dicts sea una lista de diccionarios
+            if not isinstance(reports_dicts, list):
+                raise ValueError("Data must be a list of dictionaries")
+
+            # Llamar al método del repositorio
+            return self.repository.create_resources(reports_dicts)
+        except Exception as e:
+            return {"error": str(e)}, 500

@@ -3,16 +3,17 @@ from bson import ObjectId
 from typing import Optional
 
 class ReportsModel(BaseModel):
-    id: Optional[ObjectId] = Field(None, alias="_id")
-    title: Optional[str] = None
-    descrip: Optional[str] = None
-    image: Optional[str] = None
-    drawing: Optional[str] = None
-    measurements: Optional[str] = None
-    type: Optional[str] = None
+    id: Optional[ObjectId] = Field(default=None, alias="_id")
+    title: str
+    descrip: str
+    image: str
+    drawing: str
+    measurements: str
+    type: str
 
     class Config:
+        allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {
-            ObjectId: str
+            ObjectId: lambda v: str(v)
         }
