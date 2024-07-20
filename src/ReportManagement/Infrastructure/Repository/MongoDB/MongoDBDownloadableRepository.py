@@ -10,25 +10,24 @@ class DownloadableRepository(DownloadablePort):
     def __init__(self):
         self.collection = downloadable_collection
 
-    def get_downloadable(self, report_type: str, report_data: dict):
-        # Generar el contenido del reporte según el tipo
-        if report_type == "1":
+    def get_downloadable(self, report_url: str, report_data: dict):
+        if report_url == "1":
             report_content = f"Reporte 1 {report_data.get('date', 'No Date Provided')}"
-        elif report_type == "2":
+        elif report_url == "2":
             report_content = f"Reporte 2 {report_data.get('date', 'No Date Provided')}"
-        elif report_type == "3":
+        elif report_url == "3":
             report_content = f"Reporte 3 {report_data.get('date', 'No Date Provided')}"
-        elif report_type == "4":
+        elif report_url == "4":
             report_content = f"Reporte 4 {report_data.get('date', 'No Date Provided')}"
         else:
             return {
                 "data": {},
-                "message": f"Tipo de reporte no soportado: {report_type}",
+                "message": f"Tipo de reporte no soportado: {report_url}",
                 "status": False
             }, 400
 
         # Generar PDF y guardar
-        pdf_filename = f"reporte_{report_type}_{report_data.get('date', 'no_date')}.pdf"
+        pdf_filename = f"reporte_{report_url}_{report_data.get('date', 'no_date')}.pdf"
         pdf_path = os.path.join("/ruta/donde/guardar", pdf_filename)  # Ajusta la ruta según tu entorno
         self.generate_pdf(pdf_path, report_content)
 

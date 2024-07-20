@@ -5,7 +5,7 @@ from typing import Optional
 
 class DownloadoadableModel(BaseModel):
     id: Optional[ObjectId] = Field(default=None, alias="_id")
-    type: str
+    url: str
 
     class Config:
         allow_population_by_field_name = True
